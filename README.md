@@ -1,0 +1,2 @@
+# Bamz
+Heroku sample
