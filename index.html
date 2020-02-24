@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Bar-amz</title>
+<link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
+<style>
+body {
+  font-family: Optima,Segoe,Segoe UI,Candara,Calibri,Helvetica Neue,Helvetica,Arial,sans-serif; 
+}
+table#producttable td {
+  padding: 12px;
+  border: solid 0px;
+  text-align: center;
+}
+table#producttable thead td:first-child {
+  padding-left: 120px;
+  padding-right: 120px;
+}
+table#producttable thead tr {
+  border-bottom: solid 1px lightgray;
+}
+table#producttable {
+  border-collapse:  collapse;
+}
+</style>
+</head>
+<body>
+<h2>Barcode→Amazon</h2>
+<div><i class="far fa-hand-point-right"></i>&nbsp;<input type="text" placeholder="バーコード(JAN/ISBN)" onchange="callApiUpdate()" id="update"/></div>
+
+<table id="producttable">
+  <thead>
+    <tr>
+      <td><i class="fab fa-amazon"></i></td>
+      <td><i class="fas fa-bars"></i></td>
+    </tr>
+  </thead>
+  <tbody>
+  </tbody>
+</table>
+
+<template id="productrow">
+  <tr>
+    <td class="record">
+      <a><img /></a><br/><span></span>
+    </td>
+    <td><i class="fas fa-trash" onclick="delete_record(this);"></i></td>
+  </tr>
+</template> 
+</body>
+<script>
+var update_text = document.querySelector('#update');
+
+update_text.focus();
+
+function insert_item(item) {
+  var template = document.querySelector('#productrow');
+  var tbody = document.querySelector("tbody");
+  var clone = document.importNode(template.content, true);
+  var td = clone.querySelectorAll("td");
+  var img = td[0].querySelector("img")
+  var a = td[0].querySelector("a");
+  var span = td[0].querySelector("span")
+  img.src = item['img'];
+  a.href = item['link'];
+  span.textContent = item['title'];
+  // td[2].textContent = item['ean'];
+
+  tbody.insertBefore(clone, tbody.firstChild);
+}
+
+function apply_state(state) {
+  for(item in state) {
+    insert_item(state[item]);
+  }
+}
+
+function postState(url, data) {
+  var x = new XMLHttpRequest();
+  var fd = new FormData();
+
+  for(name in data) {
+    fd.append(name, data[name]);
+  }
+
+  x.onreadystatechange = function() {
+    if (x.readyState == 4 && x.status == 200) {
+        var state = JSON.parse(x.responseText);
+        apply_state(state);
+    }
+  }
+    
+  x.open("POST", url);
+  x.withCredentials = true;
+  x.send(fd);
+}
+
+function callApiUpdate() {
+  url = '/api';
+
+  data = {
+    text: JSON.stringify(update_text.value)
+  };
+
+  postState(url, data);
+  update_text.value = "";
+  update_text.focus();
+}
+
+function delete_record(me) {
+  var node;
+  node = me.parentNode.parentNode;
+  node.parentNode.removeChild(node);
+}
+</script>
+</html>
