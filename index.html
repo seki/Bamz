@@ -2,48 +2,74 @@
 <html>
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0">　
 <title>Bar-amz</title>
+<link rel="shortcut icon" href="/favicon.ico">
 <link href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" rel="stylesheet">
 <style>
+@media screen and (min-width: 481px) { 
+
+}
+
+@media screen and (max-width: 480px) {
+
+}
+
 body {
   font-family: Optima,Segoe,Segoe UI,Candara,Calibri,Helvetica Neue,Helvetica,Arial,sans-serif; 
+  margin: 1em;
 }
 table#producttable td {
-  padding: 12px;
+  padding: 1rem;
   border: solid 0px;
-  text-align: center;
+  text-align: left;
+  vertical-align: baseline;
 }
 table#producttable thead td:first-child {
   padding-left: 120px;
   padding-right: 120px;
+  text-align: center;
+
 }
 table#producttable thead tr {
   border-bottom: solid 1px lightgray;
 }
-table#producttable {
-  border-collapse:  collapse;
+table#producttable figure {
+	float: left;
+  margin: 0rem 1rem 0rem 0rem;
 }
+table#producttable img {
+  max-width: 6rem;
+}
+.record {
+  width: 300px;
+}
+.menu {
+  width: 1em;
+}
+
 </style>
 </head>
 <body>
-<h2>Barcode→Amazon</h2>
-<div><i class="far fa-hand-point-right"></i>&nbsp;<input type="text" placeholder="バーコード(JAN/ISBN)" onchange="callApiUpdate()" id="update"/></div>
-
+<div class="main">
+<h2>Barcode→Amazon
+<i class="far fa-hand-point-right"></i>&nbsp;<input type="text" placeholder="バーコード(JAN/ISBN)" onchange="call_api()" id="update"/>
+</h2>
 <table id="producttable">
   <thead>
     <tr>
-      <td><i class="fab fa-amazon"></i></td>
-      <td><i class="fas fa-bars"></i></td>
+      <td class="record"><i class="fab fa-amazon"></i></td>
+      <td class="menu"><i class="fas fa-bars"></i></td>
     </tr>
   </thead>
-  <tbody>
-  </tbody>
+  <tbody></tbody>
 </table>
+</div>
 
 <template id="productrow">
-  <tr>
+  <tr data-title="" >
     <td class="record">
-      <a><img /></a><br/><span></span>
+    <figure><a><img /></a></figure><span></span>
     </td>
     <td><i class="fas fa-trash" onclick="delete_record(this);"></i></td>
   </tr>
@@ -67,7 +93,12 @@ function insert_item(item) {
   span.textContent = item['title'];
   // td[2].textContent = item['ean'];
 
+
   tbody.insertBefore(clone, tbody.firstChild);
+  var newone = tbody.querySelector("tr");
+  for (let key in item) {
+    newone.dataset[key] = item[key];
+  }
 }
 
 function apply_state(state) {
@@ -96,7 +127,7 @@ function postState(url, data) {
   x.send(fd);
 }
 
-function callApiUpdate() {
+function call_api() {
   url = '/api';
 
   data = {
@@ -113,5 +144,9 @@ function delete_record(me) {
   node = me.parentNode.parentNode;
   node.parentNode.removeChild(node);
 }
+
+let hoge = [{"title":"dRubyによる分散・Webプログラミング","ean":"9784274066092","link":"https://www.amazon.co.jp/dp/4274066096?tag=ilikeruby-22&linkCode=osi&th=1&psc=1","img":"https://m.media-amazon.com/images/I/412DANV707L._SL160_.jpg","img_small":"https://m.media-amazon.com/images/I/412DANV707L._SL75_.jpg","contributors":"関 将俊","manufacturer":"オーム社"},{"title":"Señorito Druby","ean":null,"link":"https://www.amazon.co.jp/dp/B07WPJ7KMX?tag=ilikeruby-22&linkCode=osi&th=1&psc=1","img":"https://m.media-amazon.com/images/I/51EexMnyPKL._SL160_.jpg","img_small":"https://m.media-amazon.com/images/I/51EexMnyPKL._SL75_.jpg","contributors":"Pablo Villarreal","manufacturer":"Pablo Villarreal"},{"title":"The dRuby Book: Distributed and Parallel Computing with Ruby","ean":"9781934356937","link":"https://www.amazon.co.jp/dp/193435693X?tag=ilikeruby-22&linkCode=osi&th=1&psc=1","img":"https://m.media-amazon.com/images/I/41-F6GwUgNL._SL160_.jpg","img_small":"https://m.media-amazon.com/images/I/41-F6GwUgNL._SL75_.jpg","contributors":"Seki, Masatoshi, Inoue, Makoto","manufacturer":"Pragmatic Bookshelf"},{"title":"dRubyによる分散オブジェクトプログラミング","ean":"9784756139610","link":"https://www.amazon.co.jp/dp/4756139612?tag=ilikeruby-22&linkCode=osi&th=1&psc=1","img":"https://m.media-amazon.com/images/I/41GZG7R295L._SL160_.jpg","img_small":"https://m.media-amazon.com/images/I/41GZG7R295L._SL75_.jpg","contributors":"将俊, 関","manufacturer":"アスキー"}]
+
+apply_state(hoge);
 </script>
 </html>
