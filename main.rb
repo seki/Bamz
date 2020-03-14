@@ -5,7 +5,9 @@ require_relative 'src/bamz'
 port = Integer(ENV['PORT']) rescue 8080
 server = WEBrick::HTTPServer.new({:Port => port})
 
+server.mount('/favicon.ico', WEBrick::HTTPServlet::FileHandler, 'image/seki.ico')
 server.mount('/', WEBrick::HTTPServlet::FileHandler, 'index.html')
+
 
 $bams = Bamz.new
 server.mount_proc('/api') do |req, res|
